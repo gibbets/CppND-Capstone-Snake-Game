@@ -1,6 +1,7 @@
 #include "snake.h"
 #include <cmath>
 #include <iostream>
+#include <random>
 
 void Snake::Update() {
   SDL_Point prev_cell{
@@ -37,10 +38,6 @@ void Snake::UpdateHead() {
       head_x += speed;
       break;
   }
-
-  // Wrap the Snake around to the beginning if going off of the screen.
-  head_x = fmod(head_x + grid_width, grid_width);
-  head_y = fmod(head_y + grid_height, grid_height);
 }
 
 void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) {
@@ -66,7 +63,7 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) 
 void Snake::GrowBody() { growing = true; }
 
 // Inefficient method to check if cell is occupied by snake.
-bool Snake::SnakeCell(int x, int y) {
+bool Snake::SnakeCell(int x, int y) const {
   if (x == static_cast<int>(head_x) && y == static_cast<int>(head_y)) {
     return true;
   }
@@ -76,4 +73,23 @@ bool Snake::SnakeCell(int x, int y) {
     }
   }
   return false;
+}
+
+SDL_Point Snake::generateRandomPosition() {
+  SDL_Point pos;
+  
+  std::random_device dev;
+  std::mt19937 engine(dev());
+  std::uniform_int_distribution<int> random_w(0, static_cast<int>(grid_width - 1));
+  std::uniform_int_distribution<int> random_h(0, static_cast<int>(grid_height - 1));
+
+  while (true) {
+    pos.x = random_w(engine);
+    pos.y = random_h(engine);
+    // Check that the location is not occupied by a snake item before placing
+    // food.
+    if (!SnakeCell(pos.x, pos.y)) {
+      return pos;
+    }
+  }
 }

@@ -4,10 +4,12 @@
 
 Game::Game(std::size_t grid_width, std::size_t grid_height)
     : snake(grid_width, grid_height),
-      engine(dev()),
-      random_w(0, static_cast<int>(grid_width - 1)),
-      random_h(0, static_cast<int>(grid_height - 1)) {
-  PlaceFood();
+      mGrid_width(grid_width),
+      mGrid_height(grid_height),
+      state(GameState::START),
+      mFood(snake.generateRandomPosition()),
+      pc{snake, mul, 1, speed, 1} {
+
 }
 
 void Game::Run(Controller const &controller, Renderer &renderer,
@@ -22,10 +24,39 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   while (running) {
     frame_start = SDL_GetTicks();
 
-    // Input, Update, Render - the main game loop.
-    controller.HandleInput(running, snake);
-    Update();
-    renderer.Render(snake, food);
+    switch(state) {
+      case GameState::START:
+      case GameState::RUN: {
+        // Input, Update, Render - the main game loop.
+        if(controller.HandleInput(running, snake) == ControllerResult::ESCAPE) {
+          state = GameState::SHOWHIGHSCORE;
+        }
+        Update();
+        renderer.Render(snake, mFood.getPosition(), pc.getRenderMethod());
+        pc.check();
+
+        break;
+      }
+      case GameState::SHOWHIGHSCORE: {
+          std::cout << "Score: " << GetScore() << "\n";
+          std::cout << "Size: " << GetSize() << "\n";
+          state = GameState::HIGHSCORE;
+
+          break;
+      }
+      case GameState::HIGHSCORE: {
+          if(controller.HandleInput(running, snake) == ControllerResult::ESCAPE) {
+            state = GameState::END;
+          }
+        
+        break;
+      }
+      case GameState::END:
+      default: {
+        running = false;
+        break;
+      }
+    }
 
     frame_end = SDL_GetTicks();
 
@@ -50,23 +81,13 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   }
 }
 
-void Game::PlaceFood() {
-  int x, y;
-  while (true) {
-    x = random_w(engine);
-    y = random_h(engine);
-    // Check that the location is not occupied by a snake item before placing
-    // food.
-    if (!snake.SnakeCell(x, y)) {
-      food.x = x;
-      food.y = y;
-      return;
-    }
-  }
-}
-
 void Game::Update() {
-  if (!snake.alive) return;
+  SDL_Point posSnake{snake.head_x, snake.head_y};
+  SDL_Rect screen{0, 0, mGrid_width, mGrid_height};
+  if (!snake.alive or !SDL_PointInRect(&posSnake, &screen)) {
+    std::cout << "Snake died. Game Over\n";
+    state = GameState::SHOWHIGHSCORE;
+  }
 
   snake.Update();
 
@@ -74,13 +95,13 @@ void Game::Update() {
   int new_y = static_cast<int>(snake.head_y);
 
   // Check if there's food over here
-  if (food.x == new_x && food.y == new_y) {
-    score++;
-    PlaceFood();
+  if (mFood.getPosition().x == new_x && mFood.getPosition().y == new_y) {
+    score = score + mul;
+    mFood = Food(snake.generateRandomPosition());
     // Grow snake and increase speed.
     snake.GrowBody();
-    snake.speed += 0.02;
-  }
+    snake.speed += 0.02 * speed;
+  }  
 }
 
 int Game::GetScore() const { return score; }

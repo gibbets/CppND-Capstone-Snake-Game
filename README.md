@@ -44,3 +44,102 @@ This work is licensed under a
 [cc-by-sa]: http://creativecommons.org/licenses/by-sa/4.0/
 [cc-by-sa-image]: https://licensebuttons.net/l/by-sa/4.0/88x31.png
 [cc-by-sa-shield]: https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg
+
+
+## New features added
+
+### Function and control structures
+
+Additional function and control structures added to various files. New classes 
+and functions added for the power up system. This is related to all files.
+
+### User Input
+
+When the snake dies, the game pauses to show the results in the console. A future
+release could also show this in the game window, but it is too much effort to
+add a text engine to SDL. The user can then hit Escape to leave the screen.
+
+The user can hit anytime Escape to leave the game.
+
+Files:
+* controller.cpp
+* game.cpp
+
+### Classes added to the project
+
+For the power up system addtional interfaces and classes have been added.
+
+Files:
+* doublepoints.cpp
+* doublespeed.cpp
+* powerup.cpp
+
+### Initializer lists
+
+Where applicable for the power up system, intializer lists in the constructors have been used.
+
+Files:
+* doublepoints.cpp
+* doublespeed.cpp
+* powerup.cpp
+
+### Class abstract implementation
+
+For the power up system all methods are documented with comments
+
+Files:
+* doublepoints.cpp
+* doublespeed.cpp
+* powerup.cpp
+
+### Class inheritance
+
+The power up system is using class inheritance. The classes doublepoints and doublespeed
+are both derived from the same abstract base clase.
+
+Files:
+* doublepoints.cpp
+* doublespeed.cpp
+* powerup.cpp
+
+### References in function parameters
+
+The power up system is using refernces to the speed and points multiplicator
+to modify in the applyEffects class.
+
+Files:
+* doublepoints.cpp
+* doublespeed.cpp
+* powerup.cpp
+
+### Resource acquisition is initialization
+
+The project uses the RAII pattern for the locks created in the power up system.
+
+Files:
+* powerup.cpp
+
+### Smart Pointers
+
+The project uses smart pointers for the power up system.
+
+Files:
+* powerup.cpp
+
+### Multiple Threads
+
+The power up system is spawning a thread to spawn and despwan power up items.
+
+Files:
+* powerup.cpp
+
+### Locks
+
+The power up system is using locks to synchronize access to data objects.
+
+Files:
+* powerup.cpp
+
+### 
+
+

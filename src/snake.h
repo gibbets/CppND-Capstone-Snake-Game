@@ -17,7 +17,9 @@ class Snake {
   void Update();
 
   void GrowBody();
-  bool SnakeCell(int x, int y);
+  bool SnakeCell(int x, int y) const;
+
+  SDL_Point generateRandomPosition();
 
   Direction direction = Direction::kUp;
 

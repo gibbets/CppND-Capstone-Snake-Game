@@ -3,9 +3,14 @@
 
 #include "snake.h"
 
+enum ControllerResult {
+    NONE,
+    ESCAPE
+};
+
 class Controller {
  public:
-  void HandleInput(bool &running, Snake &snake) const;
+  ControllerResult HandleInput(bool &running, Snake &snake) const;
 
  private:
   void ChangeDirection(Snake &snake, Snake::Direction input,
